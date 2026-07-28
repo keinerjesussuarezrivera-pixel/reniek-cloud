@@ -16,7 +16,7 @@ RENIEK Cloud no usa Ollama, Node.js, CMD ni tu PC como servidor. Gemini responde
 3. Elige o crea un proyecto de Google.
 4. Copia la clave y guárdala en un sitio privado. No la pegues en GitHub, imágenes ni mensajes públicos.
 
-Gemini 2.5 Flash está configurado como el modelo de RENIEK. Revisa los límites y condiciones de tu cuenta en Google AI Studio: la disponibilidad gratuita puede tener cuotas y cambiar según la cuenta o región.
+RENIEK usa Gemini 3.5 Flash, el modelo cloud actual configurado para responder con rapidez. Revisa los límites y condiciones de tu cuenta en Google AI Studio: la disponibilidad gratuita puede tener cuotas y cambiar según la cuenta o región.
 
 ## 2. Subir a GitHub
 
