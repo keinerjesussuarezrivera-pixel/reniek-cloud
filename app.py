@@ -101,29 +101,39 @@ def generate_audio_reply(audio):
     return (response.text or "No pude comprender el audio.").strip()
 
 
-def speak_in_browser(text):
+def speak_in_browser(text, voice_profile="MASCULINA PROFUNDA"):
     message = json.dumps(text)
+    profile = json.dumps(voice_profile)
     components.html(
         f"""
+        <style>
+          body {{ margin:0; background:transparent; font-family:Consolas,monospace; }}
+          #activate-voice {{ width:100%; color:#4eefff; background:#031525; border:1px solid #00cbea; padding:9px; cursor:pointer; letter-spacing:.12em; font-size:12px; }}
+          #activate-voice:active {{ background:#07506a; color:#fff; }}
+        </style>
+        <button id="activate-voice">🔊 ACTIVAR VOZ NEURAL</button>
         <script>
           const speak = () => {{
             window.speechSynthesis.cancel();
             const utterance = new SpeechSynthesisUtterance({message});
             utterance.lang = 'es-ES';
-            utterance.rate = 1.02;
-            utterance.pitch = 0.78;
+            utterance.rate = 0.96;
+            utterance.pitch = 0.62;
             const voices = window.speechSynthesis.getVoices();
-            const preferred = voices.find(v => v.lang.startsWith('es') && /microsoft|google|helena|jorge/i.test(v.name))
+            const profile = {profile};
+            const maleVoice = voices.find(v => v.lang.startsWith('es') && /pablo|jorge|raul|raúl|alvaro|álvaro|diego|miguel|carlos|male|mascul/i.test(v.name));
+            const preferred = (profile === 'MASCULINA PROFUNDA' ? maleVoice : null)
               || voices.find(v => v.lang.startsWith('es'));
             if (preferred) utterance.voice = preferred;
             window.speechSynthesis.speak(utterance);
           }};
           window.speechSynthesis.onvoiceschanged = speak;
-          speak();
+          document.getElementById('activate-voice').addEventListener('click', speak);
+          // En computadores suele funcionar automáticamente; en móviles se activa al tocar el botón.
+          setTimeout(speak, 80);
         </script>
         """,
-        height=0,
-        width=0,
+        height=42,
     )
 
 
@@ -184,6 +194,9 @@ with center:
         st.markdown(f'<div class="log"><strong>[ {label} ]</strong><br>{escape(item["content"])}</div>', unsafe_allow_html=True)
 
     voice_enabled = st.toggle("SÍNTESIS DE VOZ", value=True)
+    voice_profile = st.selectbox(
+        "PERFIL DE VOZ", ["MASCULINA PROFUNDA", "VOZ DEL SISTEMA"], label_visibility="collapsed"
+    )
     with st.popover("🎙  MICRÓFONO"):
         st.caption("Graba tu comando y RENIEK lo interpretará.")
         recorded_audio = st.audio_input("", label_visibility="collapsed")
@@ -221,7 +234,7 @@ with center:
         st.rerun()
 
     if st.session_state.get("pending_voice"):
-        speak_in_browser(st.session_state.pop("pending_voice"))
+        speak_in_browser(st.session_state.pop("pending_voice"), voice_profile)
         st.caption("Voz neural activada. Si tu navegador bloquea el inicio automático, pulsa ENVIAR de nuevo.")
 
 with right:
